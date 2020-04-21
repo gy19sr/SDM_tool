@@ -1,6 +1,8 @@
 #Script
 #install.packages('sdm')
 #install.packages('dismo')
+#installAll()
+#install.packages('rJava')
 rm(list = ls()) #clear work space
 library(tidyverse)
 library(sf)
@@ -23,7 +25,8 @@ library(rgbif)
 library(dismo)
 library(raster)
 library(mapview)
-#installAll()
+library(rJava)
+library(parallel)
 
 
 ###### Set your working directory ######
@@ -64,7 +67,7 @@ head(sp)  #this is presence only data
 #bio clim
 bio <- raster::getData('worldclim',var='bio',res=10) #bioclim data resolution 10m
 bio #19 bioclim variables
-#https://worldclim.org/data/bioclim.html for 19 variables
+## https://worldclim.org/data/bioclim.html for 19 variables
 
 
 v1 <- vifstep(bio) #checking vif for collinearity
@@ -75,8 +78,8 @@ biom #9 remaining variables
 
 
 ######### viewing a basic map #############
-plot(biom[[1]]) #plot predictor variables
-
+raster::plot(biom[[1]]) #plot predictor variables
+?plot
 points(sp, cex=0.5,pch=16) #plot points of data
 
 proj4string(sp)  # check projection (should be undefined)
@@ -89,16 +92,26 @@ d <-sdmData(species~., sp, predictors = biom) #species should be lone column, tr
 d
 #currently only Presence only data - so create pseudo background data
 ? sdmData
-d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000)) #1000 bg points
+d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000)) #1000 background points
+#bg points randomly selct it across the study area
+#can make it distributed geographical area 'gRandom'
 d
+###PA needs some work 
 
-
-############# Running the model ###########
+############# Fitting and Running the model ###########
 
 #train and test (still to add)
 #need to select methods
 #getmethodNames()
-m <-sdm(species~., d, methods=c('glm','svm','rf','brt','mars','maxent'),
+m <-sdm(species~., d, methods=c('glm','svm','rf','brt','mars'),
   replication=c('boot'),n=5) #set number of bootstraping
   #number of replications and rep method can be changed
+
+m #report of how fitted 
+#large inflation in estimated absence as it was pseudo absecene
+#far better with actual absence data
+#obviously over fit
+
+
+
 
