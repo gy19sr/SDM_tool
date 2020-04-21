@@ -72,6 +72,7 @@ bio #19 bioclim variables
 
 v1 <- vifstep(bio) #checking vif for collinearity
 v1
+#can set threshold as well
 
 biom <- exclude(bio,v1)
 biom #9 remaining variables
@@ -96,7 +97,7 @@ d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000)) #1000 backgroun
 #bg points randomly selct it across the study area
 #can make it distributed geographical area 'gRandom'
 d
-###PA needs some work 
+###PA needs some work -- what do I do with no absence
 
 ############# Fitting and Running the model ###########
 
@@ -104,7 +105,7 @@ d
 #need to select methods
 #getmethodNames()
 m <-sdm(species~., d, methods=c('glm','svm','rf','brt','mars'),
-  replication=c('boot'),n=5) #set number of bootstraping
+  replication=c('boot'),n=2) #set number of bootstraping
   #number of replications and rep method can be changed
 
 m #report of how fitted 
@@ -112,6 +113,19 @@ m #report of how fitted
 #far better with actual absence data
 #obviously over fit
 
+#predict probably current distribution
+p <- predict(m, biom, 'predictions.img') #can add mean =T to do ave model result
+raster::plot(p) #plot differenct model results
+gui(m)
+
+en <- ensemble(m, biom, 'ens.img',
+    setting=list(method='weights',stat="TSS",opt=2))
+#higher weights given to methods with higher accuracy
+#if use stat="TSS",opt=2 (number refers to row in gui table threshold base)
+#when do stat="AUC" no opt needed as independent
+
+########### future predictions #############
+biof <- raster::getData('CMIPS',var='bio',res=10,rcp=85,year=70,model='AC')
 
 
 
