@@ -114,8 +114,10 @@ m #report of how fitted
 #obviously over fit
 
 #predict probably current distribution
-p <- predict(m, biom, 'predictions.img') #can add mean =T to do ave model result
-raster::plot(p) #plot differenct model results
+p <- predict(m, biom, 'predictions.img', overwrite=T) #can add mean =T to do ave model result
+p
+
+raster::plot(p[[2]]) #plot differenct model results
 gui(m)
 
 en <- ensemble(m, biom, 'ens.img',
@@ -124,8 +126,39 @@ en <- ensemble(m, biom, 'ens.img',
 #if use stat="TSS",opt=2 (number refers to row in gui table threshold base)
 #when do stat="AUC" no opt needed as independent
 
+ 
 ########### future predictions #############
-biof <- raster::getData('CMIPS',var='bio',res=10,rcp=85,year=70,model='AC')
+biof <- raster::getData('CMIP5',var='bio',res=10,rcp=85,year=70,model='AC') #prediction for yeatd in the future
+
+names(biof)
+names(bio)
+names(biof) <-names(bio) #correct names
+names(biof)
+
+pf <- predict(m, biof, 'predictionsf.img')
+
+enf <- calc(pf, mean)
+
+enf <- ensemble(m, biof, 'ensf.img', 
+                setting=list(method='weights', stat="TSS", opt=2))
+
+plot(stack(en, enf)) #compare current and future
+plot(enf) #future ensemble
+
+mapview(stack(en, enf))
+
+# ^^^^ this is all really a habitat suitability model
+#I think to make it a SDM you need to know accuracy
+
+################# calculate the diffrence between the maps and trhough time ########################################
+
+ch <- enf - en
+plot(ch) # + gained suitability over time - lost suitability over time
+
+
+getEvaluation(m, stat = c('AUC', 'TSS', 'threshold'), opt=2) #use threshold tab in gui look at model and criteria for number
+
+
 
 
 
