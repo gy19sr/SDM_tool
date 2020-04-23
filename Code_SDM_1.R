@@ -155,10 +155,30 @@ mapview(stack(en, enf))
 ch <- enf - en
 plot(ch) # + gained suitability over time - lost suitability over time
 
+################# compare presence absence #########################
+ev <- getEvaluation(m, stat = c('AUC', 'TSS', 'threshold'), opt=2) #use threshold tab in gui look at model and criteria for number
+ave <- mean(ev$threshold)
+pa <- raster(en)
+pa[] <- ifelse(en[] >= ave, 1, 0) #put in mean threshold if higher 1 if lower zero
 
-getEvaluation(m, stat = c('AUC', 'TSS', 'threshold'), opt=2) #use threshold tab in gui look at model and criteria for number
+plot(pa)
+
+
+# future presence absence
+paf <- raster(enf)
+paf[] <- ifelse(enf[] >= ave, 1, 0) #put in mean threshold if higher 1 if lower zero
+
+plot(paf)
 
 
 
+#difference map of now and future
+pac <- paf -pa
+cl <- colorRampPalette(c('red','white','darkgreen'))
+plot(pac,col=cl(3)) #extinction persistance and colinization
+
+
+###########Response curve ###############
+rcurve(m) #range over species survive
 
 
