@@ -27,6 +27,10 @@ library(raster)
 library(mapview)
 library(rJava)
 library(parallel)
+library(vegan)
+library(mnormt)
+library(psych)
+
 
 
 ###### Set your working directory ######
