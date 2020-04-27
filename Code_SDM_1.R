@@ -1,9 +1,11 @@
+
 #Script
 #install.packages('sdm')
 #install.packages('dismo')
 #installAll()
 #install.packages('rJava')
 rm(list = ls()) #clear work space
+library(shiny)
 library(tidyverse)
 library(sf)
 library(tmap)
@@ -42,9 +44,10 @@ library(psych)
 #sp = spatial point, geo means give coordinates
 #?gbif 
 #capitalisation matters
-sp <- gbif("Lynx","pardinus",download = f) #check occurances
+sp <- gbif("Lynx","pardinus",download = F) #check occurances
+sp
 sp <- gbif("Lynx","pardinus",download = T, geo=T,sp=F) # Download 
-
+length(sp)
 
 ############## data cleaning ##############
 
@@ -58,11 +61,11 @@ sp <-sp[-w,]
 
 sp$species <- 1    #add new column species
 sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
-head(sp)
+#head(sp)
 coordinates(sp) <- ~lon + lat #make species into spatial points
-class(sp)
-head(sp)  #this is presence only data
-
+#class(sp)
+#head(sp)  #this is presence only data
+raster::plot(sp)
 
 ########### predictor variables #################
 #test
@@ -96,7 +99,7 @@ head(sp)
 d <-sdmData(species~., sp, predictors = biom) #species should be lone column, training = sp, then predictors
 d
 #currently only Presence only data - so create pseudo background data
-? sdmData
+#? sdmData
 d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000)) #1000 background points
 #bg points randomly selct it across the study area
 #can make it distributed geographical area 'gRandom'
@@ -108,7 +111,7 @@ d
 #train and test (still to add)
 #need to select methods
 #getmethodNames()
-m <-sdm(species~., d, methods=c('glm','svm','rf','brt','mars'),
+m <-sdm(species~., d, methods=c('glm','svm','rf'),
   replication=c('boot'),n=2) #set number of bootstraping
   #number of replications and rep method can be changed
 
@@ -121,7 +124,9 @@ m #report of how fitted
 p <- predict(m, biom, 'predictions.img', overwrite=T) #can add mean =T to do ave model result
 p
 
+raster::plot(p[])
 raster::plot(p[[2]]) #plot differenct model results
+raster::plot(p[[]])
 gui(m)
 
 en <- ensemble(m, biom, 'ens.img',
@@ -146,8 +151,9 @@ enf <- calc(pf, mean)
 enf <- ensemble(m, biof, 'ensf.img', 
                 setting=list(method='weights', stat="TSS", opt=2))
 
-plot(stack(en, enf)) #compare current and future
 plot(enf) #future ensemble
+plot(stack(en, enf)) #compare current and future
+
 
 mapview(stack(en, enf))
 
