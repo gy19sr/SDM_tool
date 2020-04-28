@@ -33,8 +33,10 @@ library(vegan)
 library(mnormt)
 library(psych)
 
+#if (!require(abind)) install.packages('abind')
+#library(abind)
 
-
+?abind
 ###### Set your working directory ######
 
 #setwd("C:/Users/stuar/OneDrive/Documents/onlinecourses/Ecology/Ecological_Data_modelling")  
@@ -45,7 +47,8 @@ library(psych)
 #?gbif 
 #capitalisation matters
 #Camelus bactrianus
-sp <- gbif("Camelus","bactrianus",download = F) #check occurances
+#Varecia rubra
+sp <- gbif("Varecia","rubra",download = F) #check occurances
 sp <- gbif("Canis","lupus",download = F)
 sp
 sp <- gbif("Lynx","pardinus",download = T, geo=T,sp=F) # Download 
