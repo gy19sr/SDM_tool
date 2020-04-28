@@ -44,7 +44,9 @@ library(psych)
 #sp = spatial point, geo means give coordinates
 #?gbif 
 #capitalisation matters
-sp <- gbif("Lynx","pardinus",download = F) #check occurances
+#Camelus bactrianus
+sp <- gbif("Camelus","bactrianus",download = F) #check occurances
+sp <- gbif("Canis","lupus",download = F)
 sp
 sp <- gbif("Lynx","pardinus",download = T, geo=T,sp=F) # Download 
 length(sp)
@@ -66,6 +68,7 @@ coordinates(sp) <- ~lon + lat #make species into spatial points
 #class(sp)
 #head(sp)  #this is presence only data
 raster::plot(sp)
+
 
 ########### predictor variables #################
 #test
@@ -111,8 +114,10 @@ d
 #train and test (still to add)
 #need to select methods
 #getmethodNames()
-m <-sdm(species~., d, methods=c('glm','svm','rf'),
-  replication=c('boot'),n=2) #set number of bootstraping
+m <-sdm(species~., d, methods=c('rf'),
+        replication=c('boot'),n=3) 
+#m <-sdm(species~., d, methods=c('glm','svm','rf'),
+#  replication=c('boot'),n=2) #set number of bootstraping
   #number of replications and rep method can be changed
 
 m #report of how fitted 
@@ -125,7 +130,7 @@ p <- predict(m, biom, 'predictions.img', overwrite=T) #can add mean =T to do ave
 p
 
 raster::plot(p[])
-raster::plot(p[[2]]) #plot differenct model results
+raster::plot(p[[1]]) #plot differenct model results
 raster::plot(p[[]])
 gui(m)
 

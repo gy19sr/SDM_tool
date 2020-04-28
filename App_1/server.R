@@ -2,9 +2,7 @@
 # This is the server logic of a Shiny web application. You can run the
 # application by clicking 'Run App' above.
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
+#check if package then only install if neccessary
 #
 
 library(shiny)
@@ -50,7 +48,7 @@ shinyServer(function(input, output) {
         sp_occurences
     })
     
-    output$occurances_map <- renderPlot({
+    output$HSM_map <- renderPlot({
         
         # generate species data
         genus_name <- input$Genus_name
@@ -62,7 +60,16 @@ shinyServer(function(input, output) {
         sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
         coordinates(sp) <- ~lon + lat
         #plot the points
-        raster::plot(sp)
+        proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection
+        bio <- raster::getData('worldclim',var='bio',res=10) 
+        v1 <- vifstep(bio)
+        biom <- exclude(bio,v1)
+        d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000))
+        m <-sdm(species~., d, methods=c('rf'),
+                replication=c('boot'),n=3) 
+        p <- predict(m, biom, 'predictions.img', overwrite=T)
+        raster::plot(p[[1]])
     })    
 
 })
+

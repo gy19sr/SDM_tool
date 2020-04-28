@@ -4,8 +4,6 @@
 #
 # Find out more about building applications with Shiny here:
 #
-#    http://shiny.rstudio.com/
-#
 
 library(shiny)
 
@@ -21,17 +19,17 @@ shinyUI(fluidPage(
             textInput("Species_name",
                         "species",
                         value = "",
-                        placeholder = "Enter Genus Upper Case"),
+                        placeholder = "Enter species Lower Case"),
         
             textInput("Genus_name",
                         "Genius",
                         value = "",
-                        placeholder = "Enter species Lower Case")
+                        placeholder = "Enter Genus Upper Case")
         ),
         # Show a plot of the generated distribution
         mainPanel(
             textOutput("occurances"),
-            plotOutput("occurances_map")
+            plotOutput("HSM_map")
         )
     )
 ))
