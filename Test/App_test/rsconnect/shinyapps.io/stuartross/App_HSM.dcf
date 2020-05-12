@@ -1,0 +1,13 @@
+name: App_HSM
+title: App_HSM
+username:
+account: stuartross
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2274898
+bundleId: 3128400
+url: https://stuartross.shinyapps.io/App_HSM/
+when: 1589133823.29652
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: predictions.img|predictions.img.aux.xml

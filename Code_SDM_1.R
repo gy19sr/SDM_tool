@@ -1,9 +1,10 @@
-
 #Script
 #install.packages('sdm')
 #install.packages('dismo')
 #installAll()
 #install.packages('rJava')
+#install.packages('rsconnect')
+
 rm(list = ls()) #clear work space
 library(shiny)
 library(tidyverse)
@@ -33,6 +34,8 @@ library(vegan)
 library(mnormt)
 library(psych)
 
+?mainPanel
+
 #if (!require(abind)) install.packages('abind')
 #library(abind)
 
@@ -44,15 +47,20 @@ library(psych)
 
 ############  check and load data  ##############
 #sp = spatial point, geo means give coordinates
-#?gbif 
+?gbif 
 #capitalisation matters
 #Camelus bactrianus
+# Microcebus danfossi
 #Varecia rubra
-sp <- gbif("Varecia","rubra",download = F) #check occurances
+sp <- gbif("Hapalemur","aureus",download = F) #check occurances
 sp <- gbif("Canis","lupus",download = F)
 sp
-sp <- gbif("Lynx","pardinus",download = T, geo=T,sp=F) # Download 
+sp <- gbif("Varecia","rubra",download = T, geo=T,sp=F,end=30) # Download 
+sp <- gbif("Camelus","bactrianus",download = T, geo=T,sp=F,end=30)
 length(sp)
+
+??shiny
+
 
 ############## data cleaning ##############
 
@@ -96,9 +104,13 @@ raster::plot(biom[[1]]) #plot predictor variables
 ?plot
 points(sp, cex=0.5,pch=16) #plot points of data
 
+?addMarkers
+
 proj4string(sp)  # check projection (should be undefined)
 proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection
 mapview(sp)
+
+addMarkers(data = sp)
 
 ########### model prep ##########
 head(sp)
@@ -128,6 +140,10 @@ m #report of how fitted
 #far better with actual absence data
 #obviously over fit
 
+
+
+??Plot
+
 #predict probably current distribution
 p <- predict(m, biom, 'predictions.img', overwrite=T) #can add mean =T to do ave model result
 p
@@ -136,6 +152,19 @@ raster::plot(p[])
 raster::plot(p[[1]]) #plot differenct model results
 raster::plot(p[[]])
 gui(m)
+
+
+#getAnywhere(gui)
+#sdm:::gui
+#showMethods(gui)
+#getMethod("gui","sdmModels")
+#getAnywhere(shiny)
+
+#getMethod("getVarImp","sdm")
+#??sdm
+
+
+
 
 en <- ensemble(m, biom, 'ens.img',
     setting=list(method='weights',stat="TSS",opt=2))
@@ -198,5 +227,20 @@ plot(pac,col=cl(3)) #extinction persistance and colinization
 
 ###########Response curve ###############
 rcurve(m) #range over species survive
+
+
+
+######################################### Variable Importance test ###########################
+data.frame(name = names(rfFit$variable.importance),
+           value = rescale(rfFit$variable.importance, c(0,100))) %>%
+  arrange(desc(value)) %>%
+  ggplot(aes(reorder(name, value), value)) +
+  geom_col() + coord_flip() + xlab("") +
+  theme(axis.text.y = element_text(size = 7))
+
+rfFit$variable.importance
+
+
+
 
 
