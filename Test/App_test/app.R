@@ -1,9 +1,11 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-#
-#install all
+
+#Title: Habitat Suitability Tool
+#Author: Stuart Ross
+#Developed 25/05/2020
+#Instructions: 
+# 1. highlight the entire libary section and run to install all needed libraries
+# 2. once downloads and updates complete remove the below # and highlight installAll and run once. Once everything is install place the # back infront of installall
+#installAll
 
 rm(list = ls()) 
 if (!require(shiny)) install.packages('shiny')
@@ -65,6 +67,9 @@ library(permute)
 if (!require(kernlab)) install.packages('kernlab')
 library(kernlab)
 
+
+#################################################################################
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
     
@@ -108,7 +113,10 @@ ui <- fluidPage(
                      verbatimTextOutput("bio_defs")),
             
             #predictive Model 
-            tabPanel("Predictive Model",PlotOutput("pred_model"))
+            tabPanel("Predictive Model", 
+                    sliderInput ("slider1", label = h3("Adjust the slider to see suitable Habitat in _ years"), 
+                    min = 50, max = 70, value = 50, step = 20), 
+                    plotOutput("pred_model"))
             )
             
             
@@ -117,7 +125,7 @@ ui <- fluidPage(
 )
 
 
-#######################################################
+#######################################################################################
 
 
 # Define server logic required to draw a histogram
@@ -187,7 +195,7 @@ server <- function(input, output) {
         bio <- raster::getData('worldclim',var='bio',res=10) 
         v1 <- vifstep(bio)
         biom <- exclude(bio,v1)
-        d <-sdmData(species~., sp, predictors = biom, bg = list(n=200)) #Prepare the species data
+        d <-sdmData(species~., sp, predictors = biom, bg = list(n=500)) #Prepare the species data
         m <-sdm(species~., d, methods=c('rf'),
                 replication=c('boot'),n=2) 
         p <- predict(m, biom, 'predictions.img', overwrite=T)
@@ -210,7 +218,7 @@ server <- function(input, output) {
         bio <- raster::getData('worldclim',var='bio',res=10) 
         v1 <- vifstep(bio)
         biom <- exclude(bio,v1)
-        d <-sdmData(species~., sp, predictors = biom, bg = list(n=1000)) #Prepare the species data
+        d <-sdmData(species~., sp, predictors = biom, bg = list(n=500)) #Prepare the species data
         m <-sdm(species~., d, methods=c('rf'),
                 replication=c('boot'),n=2) 
         VI <- getVarImp(m, 1)
@@ -219,9 +227,34 @@ server <- function(input, output) {
     
     #### Predictive Model ####
     
-    output$pred_model
+    output$pred_model <- renderPlot ({
+        genus_name <- input$Genus_name
+        species_name <- input$Species_name
+        sp <- gbif(genus_name,species_name,download = T, geo=T,sp=F, end=200)
+        w <- which(is.na(sp$lon))
+        sp <-sp[-w,]
+        sp$species <- 1    #add new column species
+        sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
+        coordinates(sp) <- ~lon + lat
+        #plot the points
+        proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection
+        bio <- raster::getData('worldclim',var='bio',res=10) 
+        v1 <- vifstep(bio)
+        biom <- exclude(bio,v1)
+        d <-sdmData(species~., sp, predictors = biom, bg = list(n=500))
+        m <-sdm(species~., d, methods=c('rf'),
+                replication=c('boot'),n=2) 
+        scale_num <- input$slider1
+        biof <- raster::getData('CMIP5',var='bio',res=10,rcp=85,year=scale_num,model='AC')
+        names(biof) <-names(bio)
+        pf <- predict(m, biof, 'predictionsf.img')
+        enf <- calc(pf, mean)
+        
+        enf <- ensemble(m, biof, 'ensf.img', 
+                        setting=list(method='weights', stat="TSS", opt=2))
+        raster::plot(enf)
     
-    
+    })
     
     
     
