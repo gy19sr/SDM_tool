@@ -3,8 +3,8 @@
 #Author: Stuart Ross
 #Developed 25/05/2020
 #Instructions: 
-# 1. highlight the entire libary section and run to install all needed libraries
-# 2. once downloads and updates complete place the # infront of installall
+# 1. highlight the entire libary section (here to row 75) and run to install all needed libraries 
+# 2. once downloads and updates complete place the # infront of installall (line 74)
 # 3. click the file button in the top left hand corner
 # 4. new file -> shiny web app -> blank (saved wherever is appropriate)
 # 5. clear the script and paste this script into it
