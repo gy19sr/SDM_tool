@@ -5,6 +5,11 @@
 #Instructions: 
 # 1. highlight the entire libary section and run to install all needed libraries
 # 2. once downloads and updates complete place the # infront of installall
+# 3. click the file button in the top left hand corner
+# 4. new file -> shiny web app -> blank (saved wherever is appropriate)
+# 5. clear the script and paste this script into it
+# 6. click run app in the corner!
+
 
 
 rm(list = ls()) 
