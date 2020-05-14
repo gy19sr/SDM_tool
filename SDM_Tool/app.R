@@ -4,8 +4,8 @@
 #Developed 25/05/2020
 #Instructions: 
 # 1. highlight the entire libary section and run to install all needed libraries
-# 2. once downloads and updates complete remove the below # and highlight installAll and run once. Once everything is install place the # back infront of installall
-#installAll
+# 2. once downloads and updates complete place the # infront of installall
+
 
 rm(list = ls()) 
 if (!require(shiny)) install.packages('shiny')
@@ -66,6 +66,7 @@ if (!require(permute)) install.packages('permute')
 library(permute)
 if (!require(kernlab)) install.packages('kernlab')
 library(kernlab)
+installAll # put a hashtag infront of this before running app
 
 
 #################################################################################
