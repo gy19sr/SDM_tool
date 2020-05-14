@@ -228,6 +228,7 @@ server <- function(input, output) {
     
     #### Predictive Model ####
     
+    
     output$pred_model <- renderPlot ({
         genus_name <- input$Genus_name
         species_name <- input$Species_name
