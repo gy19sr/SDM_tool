@@ -2,4 +2,4 @@
  Tool to automatically generate SDM's
 
 
-Just download folder SDM_Tool above and follow instructions in code
+Just use the code app.r found in the folder SDM_Tool above and follow instructions in code
