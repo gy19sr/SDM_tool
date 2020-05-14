@@ -3,9 +3,14 @@
 #Author: Stuart Ross
 #Developed 25/05/2020
 #Instructions: 
-# 1. highlight the entire libary section and run to install all needed libraries
-# 2. once downloads and updates complete remove the below # and highlight installAll and run once. Once everything is install place the # back infront of installall
-#installAll
+# 1. highlight the entire libary section (here to row 75) and run to install all needed libraries 
+# 2. once downloads and updates complete place the # infront of installall (line 74)
+# 3. click the file button in the top left hand corner
+# 4. new file -> shiny web app -> blank (saved wherever is appropriate)
+# 5. clear the script and paste this script into it
+# 6. click run app in the corner!
+
+
 
 rm(list = ls()) 
 if (!require(shiny)) install.packages('shiny')
@@ -66,6 +71,7 @@ if (!require(permute)) install.packages('permute')
 library(permute)
 if (!require(kernlab)) install.packages('kernlab')
 library(kernlab)
+installAll # put a hashtag infront of this before running app
 
 
 #################################################################################
@@ -150,13 +156,23 @@ server <- function(input, output) {
     #### Text for variables ####
     
     output$bio_defs <- renderText({
-        paste("BIO 2 = Mean Diurnal Range", 
+        paste("BIO 1 = Annual Mean Temperature",
+              "BIO 2 = Mean Diurnal Range", 
               "BIO 3 = Isothermality",
+              "BIO 4 = Temperature Seasonality",
+              "BIO 5 = Max Temperature of Warmest Month",
+              "BIO 6 = Min Temperature of Coldest Month",
+              "BIO 7 = Temperature Annual Range (BIO5-BIO6)",
               "BIO 8 = Mean Temperature of Wettest Quarter",
               "BIO 9 = Mean Temperature of Driest Quarter",
+              "BIO 10 = Mean Temperature of Warmest Quarter",
+              "BIO 11 = Mean Temperature of Coldest Quarter",
+              "BIO 12 = Annual Precipitation",
               "BIO 13 = Precipitation of Wettest Month",
               "BIO 14 = Precipitation of Driest Month",
               "BIO 15 = Precipitation Seasonality",
+              "BIO 16 = Precipitation of Wettest Quarter",
+              "BIO 17 = Precipitation of Driest Quarter",
               "BIO 18 = Precipitation of Warmest Quarter",
               "BIO 19 = Precipitation of Coldest Quarter",
               sep="\n")
