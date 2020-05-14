@@ -152,7 +152,6 @@ server <- function(input, output) {
     output$bio_defs <- renderText({
         paste("BIO 2 = Mean Diurnal Range", 
               "BIO 3 = Isothermality",
-              "BIO 3 = Isothermality",
               "BIO 8 = Mean Temperature of Wettest Quarter",
               "BIO 9 = Mean Temperature of Driest Quarter",
               "BIO 13 = Precipitation of Wettest Month",
@@ -185,11 +184,12 @@ server <- function(input, output) {
         genus_name <- input$Genus_name
         species_name <- input$Species_name
         sp <- gbif(genus_name,species_name,download = T, geo=T,sp=F, end=200)
-        w <- which(is.na(sp$lon))
-        sp <-sp[-w,]
         sp$species <- 1    #add new column species
         sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
-        coordinates(sp) <- ~lon + lat
+        w <- which(is.na(sp$lon)) 
+        matrixc <- cbind(w, c(1))
+        sp <-sp[-matrixc,]
+        coordinates(sp) <- ~lon + lat   #remove uneeded columns
         #plot the points
         proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection
         bio <- raster::getData('worldclim',var='bio',res=10) 
@@ -208,11 +208,12 @@ server <- function(input, output) {
         genus_name <- input$Genus_name
         species_name <- input$Species_name
         sp <- gbif(genus_name,species_name,download = T, geo=T,sp=F, end=200)
-        w <- which(is.na(sp$lon))
-        sp <-sp[-w,]
         sp$species <- 1    #add new column species
         sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
-        coordinates(sp) <- ~lon + lat
+        w <- which(is.na(sp$lon)) 
+        matrixc <- cbind(w, c(1))
+        sp <-sp[-matrixc,]
+        coordinates(sp) <- ~lon + lat   #remove uneeded columns
         #plot the points
         proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection
         bio <- raster::getData('worldclim',var='bio',res=10) 
@@ -231,10 +232,11 @@ server <- function(input, output) {
         genus_name <- input$Genus_name
         species_name <- input$Species_name
         sp <- gbif(genus_name,species_name,download = T, geo=T,sp=F, end=200)
-        w <- which(is.na(sp$lon))
-        sp <-sp[-w,]
         sp$species <- 1    #add new column species
         sp <- sp[,c('lon','lat','species')]    #remove uneeded columns
+        w <- which(is.na(sp$lon)) 
+        matrixc <- cbind(w, c(1))
+        sp <-sp[-matrixc,]
         coordinates(sp) <- ~lon + lat
         #plot the points
         proj4string(sp) <-projection(raster()) #set projection by making empty raster and assigning its projection

@@ -57,10 +57,13 @@ sp <- gbif("Canis","lupus",download = F)
 sp
 sp <- gbif("Varecia","rubra",download = T, geo=T,sp=F,end=30) # Download 
 sp <- gbif("Camelus","bactrianus",download = T, geo=T,sp=F,end=30)
+
+#Panthera pardus
 length(sp)
 
 ??shiny
-
+sp <- gbif("Panthera","pardus",download = T, geo=T,sp=F,end=1000)
+head(sp)
 
 ############## data cleaning ##############
 
