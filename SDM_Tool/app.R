@@ -71,7 +71,7 @@ if (!require(permute)) install.packages('permute')
 library(permute)
 if (!require(kernlab)) install.packages('kernlab')
 library(kernlab)
-installAll # put a hashtag infront of this before running app
+#installAll # put a hashtag infront of this before running app
 
 
 #################################################################################
@@ -266,10 +266,10 @@ server <- function(input, output) {
         scale_num <- input$slider1
         biof <- raster::getData('CMIP5',var='bio',res=10,rcp=85,year=scale_num,model='AC')
         names(biof) <-names(bio)
-        pf <- predict(m, biof, 'predictionsf.img')
+        pf <- predict(m, biof, 'predictionsts.img', overwrite=TRUE)
         enf <- calc(pf, mean)
         
-        enf <- ensemble(m, biof, 'ensf.img', 
+        enf <- ensemble(m, biof, 'enstfs.img', overwrite=TRUE, 
                         setting=list(method='weights', stat="TSS", opt=2))
         raster::plot(enf)
         
